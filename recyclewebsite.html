@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barcode Scanner with Snapshot</title>
+    <title>Barcode Scanner with Recycling Instructions</title>
     <style>
         body {
             display: flex;
@@ -25,9 +25,39 @@
         #result {
             margin-top: 20px;
             font-size: 18px;
+            white-space: pre-wrap; /* Maintain whitespace */
         }
         canvas {
             display: none;
+        }
+        #scanButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 20px 0; /* Margin adjusted for spacing */
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 2px solid #333;
+            border-radius: 10px;
+            visibility: hidden; /* Hidden by default */
+        }
+        #overlay img {
+            max-width: 80%; /* Adjust as needed */
+            max-height: 80%; /* Adjust as needed */
+            background: transparent; /* Ensure background is transparent */
         }
         .scan-button{
             background-color: green;
@@ -93,9 +123,68 @@
     <button id="toggleButton">Start Camera</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-    <script src="script.js"></script>
-    <button class = "scan-button"> Scan your Item</button>
-    <a> </a>
+    <script>
+        let isScanning = false;
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        document.getElementById('scanButton').addEventListener('click', function() {
+            const overlay = document.getElementById('overlay');
+            if (isScanning) {
+                // Stop the scanner
+                Quagga.stop();
+                isScanning = false;
+                this.innerText = "Start Barcode Scanner";
+                document.getElementById('result').innerText = "Scanning stopped. Click to start again.";
+                overlay.style.visibility = 'visible'; // Show overlay when stopped
+            } else {
+                // Start the scanner
+                Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: document.querySelector('#interactive'),
+                        constraints: {
+                            facingMode: "environment" // Use rear camera
+                        }
+                    },
+                    decoder: {
+                        readers: ["ean_reader", "code_128_reader"] // Specify the barcode types to scan
+                    }
+                }, function(err) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    console.log("Initialization finished. Ready to start");
+                    Quagga.start();
+                    isScanning = true;
+                    document.getElementById('result').innerText = "Scanning...";
+                    document.getElementById('scanButton').innerText = "Stop Barcode Scanner";
+                    overlay.style.visibility = 'hidden'; // Hide overlay when scanning
+                });
+
+                Quagga.onDetected(function(data) {
+                    const barcode = data.codeResult.code;
+                    console.log("Detected barcode:", barcode);
+                    document.getElementById('result').innerText = `Detected barcode: ${barcode}\n\nRecycling Instructions:\n${getRecyclingInstructions()}`;
+                    
+                    // Stop scanning after detection
+                    Quagga.stop();
+                    isScanning = false;
+                    document.getElementById('scanButton').innerText = "Start Barcode Scanner";
+                    overlay.style.visibility = 'visible'; // Show overlay after detection
+                });
+            }
+        });
+
+        // Function to return recycling instructions as a string
+        function getRecyclingInstructions() {
+            return `1. Remove Non-Paper Components:\n   - Take out any plastic covers: If your notebook has a plastic cover, remove it as it often can't be recycled with paper.\n   - Pull out any spiral bindings: If your notebook is spiral-bound, remove the metal or plastic coils.\n\n` +
+                   `2. Check for Other Materials:\n   - Remove stickers, tape, and glue: These can contaminate the paper recycling process.\n   - Check for pages with excessive ink: If pages are heavily inked or painted, they may not be suitable for recycling.\n\n` +
+                   `3. Separate the Pages:\n   - If your notebook has perforated pages, you can tear them out easily.\n   - If it’s a bound notebook, consider cutting out the pages for recycling.`;
+        }
+    </script>
 </body>
 
 </html>
