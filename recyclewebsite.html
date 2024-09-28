@@ -4,10 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barcode Scanner with Snapshot</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        #interactive {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        canvas {
+            display: none;
+        }
+        .scan-button{
+            background-color: green;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: small;
+        }
+        .scan-button:hover{
+            background-color: darkgreen;
+        }
+        .learn-more-button{
+            background-color: black;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: small;
+        }
+        .more-content{
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
     <link rel="stylesheet" href="/recyclewebsite.css">
 
 </head>
+
+<h1> Recycle Mate </h1>
+<h2></h2>
+<h3></h3>
+
 <body>
+    <p>Around 40% of Americans don't recycle properly. 
+        We're here to change that. Simply scan the barcode 
+        of any item, and we'll tell you exactly how to recycle 
+        or dispose of it, helping you make a positive impact on 
+        the planet.
+    </p>
+    <button class = "learn-more-button" onclick = "toggleContent()">Learn More</button>
+
+    <div id = "moreContent" class = "more-content">
+        <p>By scanning the barcode of your item, you'll receive information on how to properly dispose of it, whether it's recyclable, compostable, or needs to go to the landfill. Join us in reducing waste and making a positive environmental impact!</p>
+    </div>
+    
+    <script>
+        function toggleContent(){
+            var content = document.getElementById("moreContent");
+            if(content.style.display == "none"){
+                content.style.display = "block"
+            }else{
+                content.style.display = "none";
+            }
+        }
+    </script>
+
     <div id="interactive" class="viewport"></div>
     <div id="result">Scanning...</div>
     <canvas id="canvas"></canvas>
@@ -15,6 +94,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script src="script.js"></script>
+    <button class = "scan-button"> Scan your Item</button>
+    <a> </a>
 </body>
 
 </html>
