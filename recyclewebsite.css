@@ -1,0 +1,156 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    background: url('/Images/Siskiyou1.png') no-repeat center center;
+    background-size: cover;
+    backdrop-filter: blur(0px);
+}
+
+#interactive {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    border: 4px solid #333;
+    border-radius: 20px;
+    overflow: hidden;
+}
+#result {
+    margin-top: 20px;
+    font-size: 18px;
+}
+canvas {
+    display: none;
+}
+
+.instructions {
+    margin-top: 200px;
+    padding: 200px;
+    background-color: #e70000; /* Light background */
+    border: 0px solid #ff0000; /* Soft border */
+    border-radius: 0px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgb(255, 5, 5); /* Subtle shadow */
+    color: #000000; /* Dark text for readability */
+    font-size: 16px; /* Base font size */
+}
+
+.instructions h2 {
+    font-size: 24px; /* Larger font for headings */
+    margin-bottom: 10px; /* Spacing below headings */
+    color: #00a005; /* Accent color for headings */
+}
+
+.instructions p {
+    margin: 8px 0; /* Spacing between paragraphs */
+}
+
+
+
+
+
+/*
+.wrapper {
+    width: 420px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px); /* Adjust blur value as needed * /
+    color: rgb(255, 255, 255);
+    border-radius: 10px;
+    padding: 30px 40px;
+    background: rgba(255, 255, 255, 0.1); /* Adjust transparency * /
+}
+
+.wrapper h1 {
+    font-size: 36px;
+    text-align: center;
+    color: #fff; /* Ensure h1 text is readable * /
+}
+
+.wrapper .input-box {
+    position: relative; /* Needed for positioning icon * /
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 40px;
+    color: #fff;
+    padding: 20px 45px 20px 15px;
+    outline: none;
+}
+
+.input-box input::placeholder {
+    color: #fff;
+}
+
+.input-box i {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 20px;
+    color: #fff; /* Ensure icon is visible * /
+}
+
+.wrapper .remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14.5px;
+    margin: -15px 0 15px;
+}
+
+.remember-forgot label input {
+    accent-color: #fff;
+    margin-right: 3px;
+}
+
+.remember-forgot a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+.wrapper .btn {
+    width: 100%;
+    height: 45px;
+    background: #fff;
+    border: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+    outline: none;
+}
+
+.wrapper .register-link {
+    font-size: 14.5px; /* Added units * /
+    text-align: center;
+    margin: 20px 0 15px;
+}
+
+.register-link p a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
