@@ -1,27 +1,49 @@
 const canvas = document.getElementById('canvas');
 const context = canvas.getContext('2d');
+const toggleButton = document.getElementById('toggleButton');
+let cameraActive = false;
 
 // Initialize QuaggaJS
-Quagga.init({
-    inputStream: {
-        name: "Live",
-        type: "LiveStream",
-        target: document.querySelector('#interactive'), // Attach to video element
-        constraints: {
-            facingMode: "environment" // Use the back camera
+function initQuagga() {
+    Quagga.init({
+        inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: document.querySelector('#interactive'), // Attach to video element
+            constraints: {
+                facingMode: "environment" // Use the back camera
+            }
+        },
+        decoder: {
+            readers: ["ean_reader"] // Specify the type of barcode to scan
         }
-    },
-    decoder: {
-        readers: ["ean_reader"] // Specify the type of barcode to scan
+    }, function(err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log("QuaggaJS initialized.");
+        Quagga.start();
+        cameraActive = true;
+        toggleButton.textContent = "Stop Camera";
+    });
+}
+
+function stopQuagga() {
+    Quagga.stop();
+    cameraActive = false;
+    toggleButton.textContent = "Start Camera";
+}
+
+// Toggle camera on button click
+toggleButton.addEventListener('click', function() {
+    if (cameraActive) {
+        stopQuagga();
+    } else {
+        initQuagga();
     }
-}, function(err) {
-    if (err) {
-        console.error(err);
-        return;
-    }
-    console.log("QuaggaJS initialized.");
-    Quagga.start();
 });
+
 
 // Process the result when a barcode is detected
 Quagga.onDetected(function(result) {
@@ -62,6 +84,7 @@ function screenGrab() {
 
     // Create and append a div with the recycling instructions
     const instructions = document.createElement('div');
+    instructions.classList.add('instructions'); // Add the class here
     instructions.innerHTML = `
         <h2>Recycling Instructions</h2>
         <p><strong>1. Separate Materials</strong></p>
@@ -72,6 +95,8 @@ function screenGrab() {
         <p><strong>3. Repurpose Unused Pages</strong></p>
         <p>Reuse Pages: If the notebook has unused pages, consider tearing them out and using them for scratch paper, note-taking, or shopping lists before recycling the rest.</p>
     `;
+    document.body.appendChild(instructions);
+
 
     // Apply some basic styling to the instructions
     instructions.style.marginTop = "20px";
