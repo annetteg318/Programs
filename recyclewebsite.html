@@ -29,15 +29,103 @@
         canvas {
             display: none;
         }
+        #scanButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 20px 0; /* Margin adjusted for spacing */
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 2px solid #333;
+            border-radius: 10px;
+            visibility: hidden; /* Hidden by default */
+        }
+        #overlay img {
+            max-width: 80%; /* Adjust as needed */
+            max-height: 80%; /* Adjust as needed */
+            background: transparent; /* Ensure background is transparent */
+        }
     </style>
 </head>
 <body>
-    <div id="interactive" class="viewport"></div>
-    <div id="result">Scanning...</div>
+    <div id="interactive" class="viewport">
+        <div id="overlay">
+            <img src="https://www.svgrepo.com/show/116752/film-camera.svg" alt="Camera is off" />
+        </div>
+    </div>
+    <button id="scanButton">Start Barcode Scanner</button>
+    <div id="result">Click to start scanning</div>
     <canvas id="canvas"></canvas>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
-    <script src="script.js"></script>
-    
+    <script>
+        let isScanning = false;
+
+        document.getElementById('scanButton').addEventListener('click', function() {
+            const overlay = document.getElementById('overlay');
+            if (isScanning) {
+                // Stop the scanner
+                Quagga.stop();
+                isScanning = false;
+                this.innerText = "Start Barcode Scanner";
+                document.getElementById('result').innerText = "Scanning stopped. Click to start again.";
+                overlay.style.visibility = 'visible'; // Show overlay when stopped
+            } else {
+                // Start the scanner
+                Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: document.querySelector('#interactive'),
+                        constraints: {
+                            facingMode: "environment" // Use rear camera
+                        }
+                    },
+                    decoder: {
+                        readers: ["code_128_reader"] // You can add more readers if needed
+                    }
+                }, function(err) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    console.log("Initialization finished. Ready to start");
+                    Quagga.start();
+                    isScanning = true;
+                    document.getElementById('result').innerText = "Scanning..."; // Now displays when scanning starts
+                    document.getElementById('scanButton').innerText = "Stop Barcode Scanner";
+                    overlay.style.visibility = 'hidden'; // Hide overlay when scanning
+                });
+
+                Quagga.onDetected(function(data) {
+                    console.log(data);
+                    document.getElementById('result').innerText = `Detected barcode: ${data.codeResult.code}`;
+                    // Stop scanning after detection
+                    Quagga.stop();
+                    isScanning = false;
+                    document.getElementById('scanButton').innerText = "Start Barcode Scanner";
+                    overlay.style.visibility = 'visible'; // Show overlay after detection
+                    // Optionally reset after a delay
+                    setTimeout(() => {
+                        document.getElementById('result').innerText = "Click to start scanning"; // Reset text
+                        overlay.style.visibility = 'hidden'; // Hide overlay before restarting
+                    }, 2000);
+                });
+            }
+        });
+    </script>
 </body>
 </html>
